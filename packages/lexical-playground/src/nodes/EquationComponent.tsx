@@ -20,10 +20,16 @@ import {
 } from 'lexical';
 import * as React from 'react';
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  addStyles,
+  EditableMathField,
+  MathField,
+  StaticMathField,
+} from 'react-mathquill';
 
-import EquationEditor from '../ui/EquationEditor';
-import KatexRenderer from '../ui/KatexRenderer';
 import {$isEquationNode} from './EquationNode';
+
+addStyles();
 
 type EquationComponentProps = {
   equation: string;
@@ -109,23 +115,33 @@ export default function EquationComponent({
     }
   }, [editor, nodeKey, onHide, showEquationEditor]);
 
+  const mathQuillConfig = {
+    autoCommands: 'pi alpha beta gamma delta',
+    handlers: {
+      downOutOf: (mathField: MathField) => {
+        mathField.typedText('_');
+      },
+      upOutOf: (mathField: MathField) => {
+        mathField.typedText('^');
+      },
+    },
+    supSubsRequireOperand: true,
+  };
   return (
     <>
       {showEquationEditor ? (
-        <EquationEditor
-          equation={equationValue}
-          setEquation={setEquationValue}
-          inline={inline}
-          inputRef={inputRef}
+        <EditableMathField
+          latex={equationValue}
+          onChange={(mathField) => setEquationValue(mathField?.latex())}
+          config={mathQuillConfig}
         />
       ) : (
-        <KatexRenderer
-          equation={equationValue}
-          inline={inline}
+        <StaticMathField
           onClick={() => {
             setShowEquationEditor(true);
-          }}
-        />
+          }}>
+          {equationValue}
+        </StaticMathField>
       )}
     </>
   );

@@ -81,6 +81,7 @@ import {
   PASTE_COMMAND,
   REMOVE_TEXT_COMMAND,
 } from 'lexical';
+import {EquationNode} from 'lexical-playground/src/nodes/EquationNode';
 import caretFromPoint from 'shared/caretFromPoint';
 import {CAN_USE_BEFORE_INPUT, IS_IOS, IS_SAFARI} from 'shared/environment';
 
@@ -348,6 +349,13 @@ function convertBlockquoteElement(): DOMConversionOutput {
 
 export function $createHeadingNode(headingTag: HeadingTagType): HeadingNode {
   return new HeadingNode(headingTag);
+}
+
+export function $createEquationNode(
+  latex: string,
+  inline: boolean,
+): EquationNode {
+  return new EquationNode(latex, inline);
 }
 
 export function $isHeadingNode(
