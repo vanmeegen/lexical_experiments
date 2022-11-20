@@ -73,6 +73,7 @@ import {IS_APPLE} from 'shared/environment';
 
 import useModal from '../../hooks/useModal';
 import catTypingGif from '../../images/cat-typing.gif';
+import {$createEquationNode, EquationNode} from '../../nodes/EquationNode';
 import {$createStickyNode} from '../../nodes/StickyNode';
 import ColorPicker from '../../ui/ColorPicker';
 import DropDown, {DropDownItem} from '../../ui/DropDown';
@@ -80,7 +81,6 @@ import {getSelectedNode} from '../../utils/getSelectedNode';
 import {sanitizeUrl} from '../../utils/sanitizeUrl';
 import {EmbedConfigs} from '../AutoEmbedPlugin';
 import {INSERT_COLLAPSIBLE_COMMAND} from '../CollapsiblePlugin';
-import {InsertEquationDialog} from '../EquationsPlugin';
 import {INSERT_EXCALIDRAW_COMMAND} from '../ExcalidrawPlugin';
 import {
   INSERT_IMAGE_COMMAND,
@@ -525,6 +525,22 @@ export default function ToolbarPlugin(): JSX.Element {
     );
   }, [activeEditor, editor, updateToolbar]);
 
+  const insertEquation = useCallback(() => {
+    let node: EquationNode;
+    activeEditor.update(() => {
+      node = $createEquationNode('x^2', true);
+      $getSelection()?.insertNodes([node]);
+      //     // @ts-ignore
+      //   const selection = $createNodeSelection();
+      //   selection.add(node.getKey());
+      //     $setSelection(selection);
+      // });
+      // setTimeout(() => {
+      //   const domNode = editor.getElementByKey(node!.getKey());
+      //   domNode?.focus();
+    });
+  }, [activeEditor]);
+
   const applyStyleText = useCallback(
     (styles: Record<string, string>) => {
       activeEditor.update(() => {
@@ -880,16 +896,7 @@ export default function ToolbarPlugin(): JSX.Element {
               <span className="text">Poll</span>
             </DropDownItem>
 
-            <DropDownItem
-              onClick={() => {
-                showModal('Insert Equation', (onClose) => (
-                  <InsertEquationDialog
-                    activeEditor={activeEditor}
-                    onClose={onClose}
-                  />
-                ));
-              }}
-              className="item">
+            <DropDownItem onClick={insertEquation} className="item">
               <i className="icon equation" />
               <span className="text">Equation</span>
             </DropDownItem>
